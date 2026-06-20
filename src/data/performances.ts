@@ -11,7 +11,7 @@ export const PERFORMANCES: Performance[] = [
   },
   {
     year: 2025,
-    title: 'Tribute to Peter Tosh — with Aethiopika Reggaestra',
+    title: 'Tribute to Peter Tosh — with Aeti+oPHrika Reggaestra',
     location: 'Addis Ababa',
     date: 'December 2025',
     note: 'A tribute years in the making to the ‘Stepping Razor’ — Peter Tosh’s anthems played live, hosted at the Alliance Ethio-Française and recognised by Tosh’s official channels.',
