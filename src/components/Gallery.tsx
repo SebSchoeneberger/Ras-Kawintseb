@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useInView } from '../hooks/useInView'
 
 interface Photo {
   src: string
@@ -11,25 +12,25 @@ const G = '/Gallery/Screen%20Shot%202026-06-20%20at%20'
 
 const PHOTOS: Photo[] = [
   // Row 1 — hero + stacked pair
-  { src: `${G}20.10.49.png`,                                label: 'Live',                   caption: 'Live on stage',                        pos: 'center 35%'    },
-  { src: `${G}20.01.44.png`,                                label: 'Drumming',               caption: 'Roots drumming',                       pos: 'center center' },
-  { src: `${G}20.12.35.png`,                                label: 'Portrait',               caption: 'Portrait',                             pos: 'center 28%'    },
+  { src: `${G}20.10.49.webp`,                                label: 'Live',                   caption: 'Live on stage',                        pos: 'center 35%'    },
+  { src: `${G}20.01.44.webp`,                                label: 'Drumming',               caption: 'Roots drumming',                       pos: 'center center' },
+  { src: `${G}20.12.35.webp`,                                label: 'Portrait',               caption: 'Portrait',                             pos: 'center 28%'    },
   // Row 2 — 3 equal
-  { src: `${G}20.01.17.png`,                                label: 'Live · Peter Tosh',      caption: 'Tribute to Peter Tosh · Alliance Ethio-Française', pos: 'center center' },
-  { src: '/Gallery/Screenshot_20210820-231559_YouTube.jpg', label: 'Interview',             caption: 'Ethiopian television',                 pos: 'center center' },
-  { src: `${G}20.00.23.png`,                                label: 'Acoustic',               caption: 'Acoustic session',                     pos: 'center center' },
+  { src: `${G}20.01.17.webp`,                                label: 'Live · Peter Tosh',      caption: 'Tribute to Peter Tosh · Alliance Ethio-Française', pos: 'center center' },
+  { src: '/Gallery/Screenshot_20210820-231559_YouTube.webp', label: 'Interview',             caption: 'Ethiopian television',                 pos: 'center center' },
+  { src: `${G}20.00.23.webp`,                                label: 'Acoustic',               caption: 'Acoustic session',                     pos: 'center center' },
   // Extra row of 4
-  { src: `${G}20.11.28.png`,                                label: 'Live · Bob Marley',      caption: 'Bob Marley birthday celebration',       pos: 'center center' },
-  { src: `${G}20.00.59.png`,                                label: 'Acoustic',               caption: 'Roots flute',                          pos: 'center top'    },
-  { src: `${G}20.00.38.png`,                                label: 'Portrait',               caption: 'Portrait',                             pos: 'center 32%'    },
-  { src: `${G}20.11.07.png`,                                label: 'Lalibela',               caption: 'Lalibela · Church of St. George',      pos: 'center center' },
+  { src: `${G}20.11.28.webp`,                                label: 'Live · Bob Marley',      caption: 'Bob Marley birthday celebration',       pos: 'center center' },
+  { src: `${G}20.00.59.webp`,                                label: 'Acoustic',               caption: 'Roots flute',                          pos: 'center top'    },
+  { src: `${G}20.00.38.webp`,                                label: 'Portrait',               caption: 'Portrait',                             pos: 'center 32%'    },
+  { src: `${G}20.11.07.webp`,                                label: 'Lalibela',               caption: 'Lalibela · Church of St. George',      pos: 'center center' },
   // Extra row of 3
-  { src: `${G}20.11.41.png`,                                label: 'Acoustic',               caption: 'Acoustic session',                     pos: 'center top'    },
-  { src: `${G}20.13.21.png`,                                label: 'Live',                   caption: 'Live on stage',                        pos: 'center center' },
-  { src: `${G}20.01.33.png`,                                label: 'Backstage',              caption: 'Behind the scenes',                    pos: 'center center' },
+  { src: `${G}20.11.41.webp`,                                label: 'Acoustic',               caption: 'Acoustic session',                     pos: 'center top'    },
+  { src: `${G}20.13.21.webp`,                                label: 'Live',                   caption: 'Live on stage',                        pos: 'center center' },
+  { src: `${G}20.01.33.webp`,                                label: 'Backstage',              caption: 'Behind the scenes',                    pos: 'center center' },
 ]
 
-const CARD_BASE = 'relative overflow-hidden rounded-card border border-gold-400/[.14] cursor-pointer transition-colors hover:border-gold-400/50'
+const CARD_BASE = 'r-rise group/card relative overflow-hidden rounded-card border border-gold-400/[.14] cursor-pointer transition-colors hover:border-gold-400/50'
 const LABEL_BASE = 'absolute left-[14px] bottom-[12px] font-sans font-semibold uppercase text-[#9c8d7c]'
 
 function RastaStripe() {
@@ -47,16 +48,19 @@ interface CardProps {
   index: number
   onOpen: (i: number) => void
   hero?: boolean
+  delay?: string
 }
 
-function Card({ photo, index, onOpen, hero }: CardProps) {
+function Card({ photo, index, onOpen, hero, delay }: CardProps) {
   return (
-    <div className={CARD_BASE} style={{ height: hero ? '392px' : '184px' }} onClick={() => onOpen(index)}>
+    <div className={CARD_BASE} style={{ height: hero ? '392px' : '184px', animationDelay: delay }} onClick={() => onOpen(index)}>
       <img
         src={photo.src}
         alt={photo.label}
-        className="absolute inset-0 w-full h-full object-cover"
-        style={{ objectPosition: photo.pos ?? 'center center' }}
+        loading={hero ? undefined : 'lazy'}
+        decoding="async"
+        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover/card:scale-105"
+        style={{ objectPosition: photo.pos ?? 'center center', backgroundColor: '#140D0A' }}
       />
       <div
         className="absolute inset-0"
@@ -92,6 +96,8 @@ function Card({ photo, index, onOpen, hero }: CardProps) {
 export default function Gallery() {
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null)
   const [expanded, setExpanded] = useState(false)
+  const header = useInView<HTMLDivElement>()
+  const grid = useInView<HTMLDivElement>()
 
   useEffect(() => {
     if (lightboxIdx === null) return
@@ -114,58 +120,58 @@ export default function Gallery() {
       <div className="relative z-[2] px-5 py-20 lg:px-[70px] lg:py-[118px] lg:pb-[130px]">
 
         {/* Header */}
-        <div className="px-2 lg:px-0 lg:max-w-[1140px] lg:mx-auto mb-7 lg:mb-[46px] flex flex-col lg:flex-row lg:items-end lg:justify-between" style={{ gap: '20px' }}>
+        <div ref={header.ref} className={`px-2 lg:px-0 lg:max-w-[1140px] lg:mx-auto mb-7 lg:mb-[46px] flex flex-col lg:flex-row lg:items-end lg:justify-between ${header.inView ? 'in-view' : ''}`} style={{ gap: '20px' }}>
           <div>
             <div className="flex items-center mb-[18px] lg:mb-[22px]" style={{ gap: '14px' }}>
-              <span className="block bg-gold-400 w-[30px] lg:w-[46px]" style={{ height: '2px' }} />
-              <span className="font-sans font-semibold uppercase text-gold-600" style={{ fontSize: '13px', letterSpacing: '.30em' }}>
+              <span className="r-line block bg-gold-400 w-[30px] lg:w-[46px]" style={{ height: '2px' }} />
+              <span className="r-rise font-sans font-semibold uppercase text-gold-600" style={{ fontSize: '13px', letterSpacing: '.30em', animationDelay: '0.15s' }}>
                 On Stage &amp; Off
               </span>
             </div>
             <h2
-              className="font-serif font-normal text-sand-50"
-              style={{ fontSize: 'clamp(42px, 5vw, 62px)', lineHeight: '1.0', letterSpacing: '-0.015em' }}
+              className="r-rise font-serif font-normal text-sand-50"
+              style={{ fontSize: 'clamp(42px, 5vw, 62px)', lineHeight: '1.0', letterSpacing: '-0.015em', animationDelay: '0.25s' }}
             >
               Gallery
             </h2>
           </div>
           <span
-            className="hidden lg:block font-mono font-medium uppercase text-[#7d6a52] pb-[10px]"
-            style={{ fontSize: '12px', letterSpacing: '.16em' }}
+            className="r-rise hidden lg:block font-mono font-medium uppercase text-[#7d6a52] pb-[10px]"
+            style={{ fontSize: '12px', letterSpacing: '.16em', animationDelay: '0.35s' }}
           >
             13 frames · click any to expand
           </span>
         </div>
 
         {/* Mosaic grid */}
-        <div className="px-2 lg:px-0 lg:max-w-[1140px] lg:mx-auto">
+        <div ref={grid.ref} className={`px-2 lg:px-0 lg:max-w-[1140px] lg:mx-auto ${grid.inView ? 'in-view' : ''}`}>
 
           {/* Row 1 — hero + stacked pair */}
           <div className="grid gap-[10px] lg:gap-[14px] grid-cols-1 lg:grid-cols-[1.7fr_1fr]">
-            <Card photo={PHOTOS[0]} index={0} onOpen={setLightboxIdx} hero />
+            <Card photo={PHOTOS[0]} index={0} onOpen={setLightboxIdx} hero delay="0s" />
             <div className="grid grid-cols-2 lg:grid-cols-1 gap-[10px] lg:gap-[14px] lg:flex lg:flex-col">
               <div className="lg:flex-1">
-                <Card photo={PHOTOS[1]} index={1} onOpen={setLightboxIdx} />
+                <Card photo={PHOTOS[1]} index={1} onOpen={setLightboxIdx} delay="0.1s" />
               </div>
               <div className="lg:flex-1">
-                <Card photo={PHOTOS[2]} index={2} onOpen={setLightboxIdx} />
+                <Card photo={PHOTOS[2]} index={2} onOpen={setLightboxIdx} delay="0.18s" />
               </div>
             </div>
           </div>
 
           {/* Row 2 — 3 equal */}
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-[10px] lg:gap-[14px] mt-[10px] lg:mt-[14px]">
-            {[3, 4, 5].map(i => <Card key={i} photo={PHOTOS[i]} index={i} onOpen={setLightboxIdx} />)}
+            {[3, 4, 5].map((idx, i) => <Card key={idx} photo={PHOTOS[idx]} index={idx} onOpen={setLightboxIdx} delay={`${0.26 + i * 0.08}s`} />)}
           </div>
 
           {/* Collapsible — row of 4 + row of 3 */}
           {expanded && (
             <>
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-[10px] lg:gap-[14px] mt-[10px] lg:mt-[14px]">
-                {[6, 7, 8, 9].map(i => <Card key={i} photo={PHOTOS[i]} index={i} onOpen={setLightboxIdx} />)}
+                {[6, 7, 8, 9].map((idx, i) => <Card key={idx} photo={PHOTOS[idx]} index={idx} onOpen={setLightboxIdx} delay={`${i * 0.08}s`} />)}
               </div>
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-[10px] lg:gap-[14px] mt-[10px] lg:mt-[14px]">
-                {[10, 11, 12].map(i => <Card key={i} photo={PHOTOS[i]} index={i} onOpen={setLightboxIdx} />)}
+                {[10, 11, 12].map((idx, i) => <Card key={idx} photo={PHOTOS[idx]} index={idx} onOpen={setLightboxIdx} delay={`${0.32 + i * 0.08}s`} />)}
               </div>
             </>
           )}

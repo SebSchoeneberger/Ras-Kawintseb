@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import FootprintSVG from './FootprintSVG'
+import { useInView } from '../hooks/useInView'
 
 function RastaStripeLeft() {
   return (
@@ -19,18 +20,22 @@ interface AlbumCardProps {
   spotifyId: string
   youtubeUrl: string
   appleUrl: string
+  delay?: string
 }
 
-function AlbumCard({ eyebrow, title, descriptor, image, spotifyId, youtubeUrl, appleUrl }: AlbumCardProps) {
+function AlbumCard({ eyebrow, title, descriptor, image, spotifyId, youtubeUrl, appleUrl, delay }: AlbumCardProps) {
   return (
-    <div className="bg-surface-card border border-gold-400/[.14] rounded-card overflow-hidden flex flex-col">
+    <div
+      className="r-rise group/card bg-surface-card border border-gold-400/[.14] rounded-card overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-1 hover:border-gold-400/40"
+      style={{ animationDelay: delay }}
+    >
       {/* Cover */}
       <div
         className="relative overflow-hidden flex items-center justify-center"
         style={{ aspectRatio: '1/1', background: '#160F0C' }}
       >
         {image ? (
-          <img src={image} alt={title} className="w-full h-full object-contain" />
+          <img src={image} alt={title} loading="lazy" decoding="async" className="w-full h-full object-contain transition-transform duration-500 group-hover/card:scale-105" />
         ) : (
           <>
             <FootprintSVG width={74} height={120} opacity={0.07} />
@@ -77,7 +82,7 @@ function AlbumCard({ eyebrow, title, descriptor, image, spotifyId, youtubeUrl, a
           href={`https://open.spotify.com/album/${spotifyId}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center rounded-card border border-gold-400/[.12] no-underline transition-colors hover:border-gold-400/40"
+          className="group/link flex items-center rounded-card border border-gold-400/[.12] no-underline transition-colors hover:border-gold-400/40"
           style={{ gap: '15px', background: '#140D0A', padding: '13px 16px' }}
         >
           <div
@@ -96,7 +101,7 @@ function AlbumCard({ eyebrow, title, descriptor, image, spotifyId, youtubeUrl, a
               Listen on Spotify
             </div>
           </div>
-          <svg className="flex-none text-sand-600" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg className="flex-none text-sand-600 transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M7 17L17 7M17 7H7M17 7v10" />
           </svg>
         </a>
@@ -106,7 +111,7 @@ function AlbumCard({ eyebrow, title, descriptor, image, spotifyId, youtubeUrl, a
           href={youtubeUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center rounded-card border border-gold-400/[.12] no-underline transition-colors hover:border-gold-400/40"
+          className="group/link flex items-center rounded-card border border-gold-400/[.12] no-underline transition-colors hover:border-gold-400/40"
           style={{ gap: '15px', background: '#140D0A', padding: '13px 16px' }}
         >
           <div className="flex-none flex items-center justify-center" style={{ width: '42px', height: '42px' }}>
@@ -120,7 +125,7 @@ function AlbumCard({ eyebrow, title, descriptor, image, spotifyId, youtubeUrl, a
               Watch on YouTube
             </div>
           </div>
-          <svg className="flex-none text-sand-600" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg className="flex-none text-sand-600 transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M7 17L17 7M17 7H7M17 7v10" />
           </svg>
         </a>
@@ -130,7 +135,7 @@ function AlbumCard({ eyebrow, title, descriptor, image, spotifyId, youtubeUrl, a
           href={appleUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center rounded-card border border-gold-400/[.12] no-underline transition-colors hover:border-gold-400/40"
+          className="group/link flex items-center rounded-card border border-gold-400/[.12] no-underline transition-colors hover:border-gold-400/40"
           style={{ gap: '15px', background: '#140D0A', padding: '13px 16px' }}
         >
           <div className="flex-none flex items-center justify-center" style={{ width: '42px', height: '42px' }}>
@@ -144,7 +149,7 @@ function AlbumCard({ eyebrow, title, descriptor, image, spotifyId, youtubeUrl, a
               Listen on Apple Music
             </div>
           </div>
-          <svg className="flex-none text-sand-600" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg className="flex-none text-sand-600 transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M7 17L17 7M17 7H7M17 7v10" />
           </svg>
         </a>
@@ -161,18 +166,22 @@ interface SingleCardProps {
   spotifyUrl?: string
   youtubeUrl: string
   appleUrl?: string
+  delay?: string
 }
 
-function SingleCard({ title, feat, year, image, spotifyUrl, youtubeUrl, appleUrl }: SingleCardProps) {
+function SingleCard({ title, feat, year, image, spotifyUrl, youtubeUrl, appleUrl, delay }: SingleCardProps) {
   return (
-    <div className="bg-surface-card border border-gold-400/[.14] rounded-card overflow-hidden flex flex-col">
+    <div
+      className="r-rise group/card bg-surface-card border border-gold-400/[.14] rounded-card overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-1 hover:border-gold-400/40"
+      style={{ animationDelay: delay }}
+    >
       {/* Cover */}
       <div
         className="relative overflow-hidden flex items-center justify-center"
         style={{ aspectRatio: '1/1', background: '#160F0C' }}
       >
         {image ? (
-          <img src={image} alt={title} className="w-full h-full object-contain" />
+          <img src={image} alt={title} loading="lazy" decoding="async" className="w-full h-full object-contain transition-transform duration-500 group-hover/card:scale-105" />
         ) : (
           <FootprintSVG width={38} height={62} opacity={0.07} />
         )}
@@ -203,7 +212,7 @@ function SingleCard({ title, feat, year, image, spotifyUrl, youtubeUrl, appleUrl
             href={spotifyUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center rounded-card border border-gold-400/[.12] no-underline transition-colors hover:border-gold-400/40"
+            className="group/link flex items-center rounded-card border border-gold-400/[.12] no-underline transition-colors hover:border-gold-400/40"
             style={{ gap: '10px', background: '#140D0A', padding: '9px 12px' }}
           >
             <div className="flex-none flex items-center justify-center rounded-full" style={{ width: '24px', height: '24px', background: '#1DB954' }}>
@@ -212,7 +221,7 @@ function SingleCard({ title, feat, year, image, spotifyUrl, youtubeUrl, appleUrl
               </svg>
             </div>
             <span className="font-sans font-medium text-sand-300" style={{ fontSize: '12px' }}>Spotify</span>
-            <svg className="flex-none text-sand-600 ml-auto" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg className="flex-none text-sand-600 ml-auto transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M7 17L17 7M17 7H7M17 7v10" />
             </svg>
           </a>
@@ -221,14 +230,14 @@ function SingleCard({ title, feat, year, image, spotifyUrl, youtubeUrl, appleUrl
           href={youtubeUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center rounded-card border border-gold-400/[.12] no-underline transition-colors hover:border-gold-400/40"
+          className="group/link flex items-center rounded-card border border-gold-400/[.12] no-underline transition-colors hover:border-gold-400/40"
           style={{ gap: '10px', background: '#140D0A', padding: '9px 12px' }}
         >
           <div className="flex-none flex items-center justify-center" style={{ width: '24px', height: '24px' }}>
             <img src="/icons/youtube.svg" alt="" aria-hidden="true" width="24" height="24" style={{ width: '24px', height: '24px' }} />
           </div>
           <span className="font-sans font-medium text-sand-300" style={{ fontSize: '12px' }}>YouTube</span>
-          <svg className="flex-none text-sand-600 ml-auto" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <svg className="flex-none text-sand-600 ml-auto transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M7 17L17 7M17 7H7M17 7v10" />
           </svg>
         </a>
@@ -238,14 +247,14 @@ function SingleCard({ title, feat, year, image, spotifyUrl, youtubeUrl, appleUrl
             href={appleUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center rounded-card border border-gold-400/[.12] no-underline transition-colors hover:border-gold-400/40"
+            className="group/link flex items-center rounded-card border border-gold-400/[.12] no-underline transition-colors hover:border-gold-400/40"
             style={{ gap: '10px', background: '#140D0A', padding: '9px 12px' }}
           >
             <div className="flex-none flex items-center justify-center" style={{ width: '24px', height: '24px' }}>
               <img src="/icons/apple-music.svg" alt="" aria-hidden="true" width="24" height="24" style={{ width: '24px', height: '24px', borderRadius: '5px' }} />
             </div>
             <span className="font-sans font-medium text-sand-300" style={{ fontSize: '12px' }}>Apple Music</span>
-            <svg className="flex-none text-sand-600 ml-auto" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg className="flex-none text-sand-600 ml-auto transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M7 17L17 7M17 7H7M17 7v10" />
             </svg>
           </a>
@@ -256,23 +265,31 @@ function SingleCard({ title, feat, year, image, spotifyUrl, youtubeUrl, appleUrl
 }
 
 export default function Music() {
+  const albumsHead = useInView<HTMLDivElement>()
+  const albumsGrid = useInView<HTMLDivElement>()
+  const singles = useInView<HTMLDivElement>()
+
   return (
     <section id="music" className="relative bg-surface-1 overflow-hidden border-t border-gold-400/10 scroll-mt-16">
       <div className="noise absolute inset-0 z-[6] pointer-events-none" />
 
       <div className="relative z-[2] px-7 py-20 lg:px-[100px] lg:py-[128px] lg:pb-[144px]">
         {/* Header */}
-        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between lg:max-w-[1080px] lg:mx-auto" style={{ gap: '30px' }}>
+        <div
+          ref={albumsHead.ref}
+          className={`flex flex-col lg:flex-row lg:items-end lg:justify-between lg:max-w-[1080px] lg:mx-auto ${albumsHead.inView ? 'in-view' : ''}`}
+          style={{ gap: '30px' }}
+        >
           <div>
             <div className="flex items-center mb-6" style={{ gap: '14px' }}>
-              <span className="block bg-gold-400" style={{ width: '46px', height: '2px' }} />
-              <span className="font-sans font-semibold uppercase text-gold-600" style={{ fontSize: '13px', letterSpacing: '.30em' }}>
+              <span className="r-line block bg-gold-400" style={{ width: '46px', height: '2px' }} />
+              <span className="r-rise font-sans font-semibold uppercase text-gold-600" style={{ fontSize: '13px', letterSpacing: '.30em', animationDelay: '0.15s' }}>
                 Music
               </span>
             </div>
             <h2
-              className="font-serif font-normal text-sand-50"
-              style={{ fontSize: 'clamp(42px, 5vw, 62px)', lineHeight: '1.0', letterSpacing: '-0.015em' }}
+              className="r-rise font-serif font-normal text-sand-50"
+              style={{ fontSize: 'clamp(42px, 5vw, 62px)', lineHeight: '1.0', letterSpacing: '-0.015em', animationDelay: '0.25s' }}
             >
               Albums
             </h2>
@@ -283,38 +300,46 @@ export default function Music() {
         </div>
 
         {/* Album Cards */}
-        <div className="mt-14 lg:mt-[56px] lg:max-w-[1080px] lg:mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-[36px] items-start">
+        <div
+          ref={albumsGrid.ref}
+          className={`mt-14 lg:mt-[56px] lg:max-w-[1080px] lg:mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-[36px] items-start ${albumsGrid.inView ? 'in-view' : ''}`}
+        >
           <AlbumCard
             eyebrow="First Album · 2021"
             title="Touch of Tsion"
             descriptor={<>Debut album, released <span className="text-sand-50">2021</span>.</>}
-            image="/TouchOfTsionAlbum.png"
+            image="/TouchOfTsionAlbum.webp"
             spotifyId="0MbN49luErsrkwkeRe1BeE"
             youtubeUrl="https://youtu.be/rLUvJ_chc4w?si=Ddqrw7XTXVMk54XK"
             appleUrl="https://music.apple.com/us/album/touch-of-tsion/1595712504"
+            delay="0s"
           />
           <AlbumCard
             eyebrow="Second Album · 2024"
             title="Barefoot"
             descriptor={<>Second album, released <span className="text-sand-50">2024</span>.</>}
-            image="/BarefootAlbum.png"
+            image="/BarefootAlbum.webp"
             spotifyId="1xhUfDIY5sUSNuQJfZE6I2"
             youtubeUrl="https://youtu.be/dR15X_2l9d0?si=ZvHR7FgyMeSmgdgt"
             appleUrl="https://music.apple.com/us/album/barefoot/1766844290"
+            delay="0.12s"
           />
         </div>
 
         {/* Singles & EPs */}
-        <div className="mt-[72px] lg:mt-[88px] lg:max-w-[1080px] lg:mx-auto">
+        <div
+          ref={singles.ref}
+          className={`mt-[72px] lg:mt-[88px] lg:max-w-[1080px] lg:mx-auto ${singles.inView ? 'in-view' : ''}`}
+        >
           <div className="flex items-center mb-6" style={{ gap: '14px' }}>
-            <span className="block bg-gold-400" style={{ width: '46px', height: '2px' }} />
-            <span className="font-sans font-semibold uppercase text-gold-600" style={{ fontSize: '13px', letterSpacing: '.30em' }}>
+            <span className="r-line block bg-gold-400" style={{ width: '46px', height: '2px' }} />
+            <span className="r-rise font-sans font-semibold uppercase text-gold-600" style={{ fontSize: '13px', letterSpacing: '.30em', animationDelay: '0.15s' }}>
               Music
             </span>
           </div>
           <h2
-            className="font-serif font-normal text-sand-50 mb-10"
-            style={{ fontSize: 'clamp(42px, 5vw, 62px)', lineHeight: '1.0', letterSpacing: '-0.015em' }}
+            className="r-rise font-serif font-normal text-sand-50 mb-10"
+            style={{ fontSize: 'clamp(42px, 5vw, 62px)', lineHeight: '1.0', letterSpacing: '-0.015em', animationDelay: '0.25s' }}
           >
             Singles &amp; EPs
           </h2>
@@ -322,36 +347,40 @@ export default function Music() {
             <SingleCard
               title="Fidel"
               year="2025"
-              image="/Fidel.png"
+              image="/Fidel.webp"
               spotifyUrl="https://open.spotify.com/album/0YIqCZql2bWWnsMG3uGIhy"
               youtubeUrl="https://youtu.be/SlL6MT3ytwY?si=YLT3nhrlW7ki-WWy"
               appleUrl="https://music.apple.com/us/song/fidel/1789259102"
+              delay="0.3s"
             />
             <SingleCard
               title="Gathering"
               feat="ft. Jah Den"
               year="2024"
-              image="/Gathering.png"
+              image="/Gathering.webp"
               spotifyUrl="https://open.spotify.com/album/14xhty70mW81qfSBUOnOKW"
               youtubeUrl="https://www.youtube.com/watch?v=zOK0-AgYGR0"
               appleUrl="https://music.apple.com/us/song/gathering/1774387154"
+              delay="0.4s"
             />
             <SingleCard
               title="1 for Ethiopia"
               feat="ft. Fyaah Kush & others"
               year="2022"
-              image="/1ForEthiopia.png"
+              image="/1ForEthiopia.webp"
               spotifyUrl="https://open.spotify.com/album/4GwULjj7C8UUQjUcwJtVUy"
               youtubeUrl="https://youtu.be/KoCp7PUwuZo?si=-PSARtatze8UWkJv"
               appleUrl="https://music.apple.com/us/song/1-for-ethiopia/1649895664"
+              delay="0.5s"
             />
             <SingleCard
               title="Aetiopian Citizen"
               year="2022"
-              image="/AetiopianCitizen.png"
+              image="/AetiopianCitizen.webp"
               spotifyUrl="https://open.spotify.com/album/0LIvU7ANYYqcHbXhUhc8n4"
               youtubeUrl="https://youtu.be/FscDmrHY-4Q?si=XrgagVZsdRs3N4Au"
               appleUrl="https://music.apple.com/us/song/aetiopian-citizen/1618742277"
+              delay="0.6s"
             />
           </div>
         </div>

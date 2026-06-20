@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { ReactNode, FormEvent } from 'react'
 import FootprintSVG from './FootprintSVG'
+import { useInView } from '../hooks/useInView'
 
 interface FormData {
   name: string
@@ -63,6 +64,8 @@ export default function Booking() {
   const [form, setForm] = useState<FormData>(EMPTY)
   const [errors, setErrors] = useState<FieldErrors>({})
   const [submitted, setSubmitted] = useState(false)
+  const head = useInView<HTMLDivElement>()
+  const body = useInView<HTMLDivElement>()
 
   function set(key: keyof FormData) {
     return ({ target: { value } }: { target: { value: string } }) => {
@@ -91,62 +94,64 @@ export default function Booking() {
       <div className="relative z-[2] px-7 py-20 lg:px-[100px] lg:py-[128px] lg:pb-[140px]">
         <div className="lg:max-w-[1020px] lg:mx-auto">
 
-          {/* Header */}
-          <div className="flex items-center mb-6" style={{ gap: '14px' }}>
-            <span className="block bg-gold-400 w-[30px] lg:w-[46px]" style={{ height: '2px' }} />
-            <span
-              className="font-sans font-semibold uppercase text-gold-600"
-              style={{ fontSize: '13px', letterSpacing: '.30em' }}
-            >
-              Bookings
-            </span>
-          </div>
-          <h2
-            className="font-serif font-normal text-sand-50"
-            style={{ fontSize: 'clamp(38px, 5vw, 58px)', lineHeight: '1.0', letterSpacing: '-0.015em' }}
-          >
-            Book Ras Kawintseb
-          </h2>
-          <p
-            className="font-sans text-sand-300 mt-[14px] lg:mt-[18px]"
-            style={{ fontSize: '18px', lineHeight: '1.6', maxWidth: '520px' }}
-          >
-            Promoters and venues — send the details below and we'll respond within a few days.
-          </p>
-
-          {/* Performance formats */}
-          <div className="mt-9 lg:mt-[42px]">
-            <div
-              className="font-sans font-semibold uppercase text-[#9c8d7c] mb-[14px]"
-              style={{ fontSize: '11px', letterSpacing: '.22em' }}
-            >
-              Available as
+          <div ref={head.ref} className={head.inView ? 'in-view' : ''}>
+            {/* Header */}
+            <div className="flex items-center mb-6" style={{ gap: '14px' }}>
+              <span className="r-line block bg-gold-400 w-[30px] lg:w-[46px]" style={{ height: '2px' }} />
+              <span
+                className="r-rise font-sans font-semibold uppercase text-gold-600"
+                style={{ fontSize: '13px', letterSpacing: '.30em', animationDelay: '0.15s' }}
+              >
+                Bookings
+              </span>
             </div>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:gap-[14px]">
-              {FORMATS.map(f => (
-                <div
-                  key={f.title}
-                  className="bg-surface-1 border border-gold-400/[.12] rounded-card"
-                  style={{ padding: '18px 20px' }}
-                >
-                  <span className="block bg-gold-400/70 mb-[13px]" style={{ width: '22px', height: '2px' }} />
-                  <div className="font-serif font-normal text-sand-50" style={{ fontSize: '19px', lineHeight: '1.1' }}>
-                    {f.title}
+            <h2
+              className="r-rise font-serif font-normal text-sand-50"
+              style={{ fontSize: 'clamp(38px, 5vw, 58px)', lineHeight: '1.0', letterSpacing: '-0.015em', animationDelay: '0.25s' }}
+            >
+              Book Ras Kawintseb
+            </h2>
+            <p
+              className="r-rise font-sans text-sand-300 mt-[14px] lg:mt-[18px]"
+              style={{ fontSize: '18px', lineHeight: '1.6', maxWidth: '520px', animationDelay: '0.35s' }}
+            >
+              Promoters and venues — send the details below and we'll respond within a few days.
+            </p>
+
+            {/* Performance formats */}
+            <div className="mt-9 lg:mt-[42px]">
+              <div
+                className="r-rise font-sans font-semibold uppercase text-[#9c8d7c] mb-[14px]"
+                style={{ fontSize: '11px', letterSpacing: '.22em', animationDelay: '0.45s' }}
+              >
+                Available as
+              </div>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:gap-[14px]">
+                {FORMATS.map((f, i) => (
+                  <div
+                    key={f.title}
+                    className="r-rise bg-surface-1 border border-gold-400/[.12] rounded-card"
+                    style={{ padding: '18px 20px', animationDelay: `${0.52 + i * 0.08}s` }}
+                  >
+                    <span className="block bg-gold-400/70 mb-[13px]" style={{ width: '22px', height: '2px' }} />
+                    <div className="font-serif font-normal text-sand-50" style={{ fontSize: '19px', lineHeight: '1.1' }}>
+                      {f.title}
+                    </div>
+                    <div className="font-sans text-sand-400 mt-[7px]" style={{ fontSize: '13.5px', lineHeight: '1.5' }}>
+                      {f.desc}
+                    </div>
                   </div>
-                  <div className="font-sans text-sand-400 mt-[7px]" style={{ fontSize: '13.5px', lineHeight: '1.5' }}>
-                    {f.desc}
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
 
           {/* Content grid */}
-          <div className="grid grid-cols-1 gap-10 mt-10 items-start lg:grid-cols-[1fr_332px] lg:gap-[54px] lg:mt-[50px]">
+          <div ref={body.ref} className={`grid grid-cols-1 gap-10 mt-10 items-start lg:grid-cols-[1fr_332px] lg:gap-[54px] lg:mt-[50px] ${body.inView ? 'in-view' : ''}`}>
 
             {/* Form or success state */}
             {submitted ? (
-              <div className="flex flex-col items-start gap-5 py-6">
+              <div className="r-rise flex flex-col items-start gap-5 py-6">
                 <span className="flex items-center justify-center w-12 h-12 rounded-full border border-gold-400/40 bg-gold-400/[.08]">
                   <svg width="20" height="16" viewBox="0 0 20 16" fill="none" aria-hidden="true">
                     <path d="M1 8L7 14L19 2" stroke="#F0AE1E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -169,7 +174,7 @@ export default function Booking() {
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-[22px]">
+              <form onSubmit={handleSubmit} noValidate className="r-rise flex flex-col gap-[22px]">
                 {/* Name + Email */}
                 <div className="grid grid-cols-1 gap-[22px] lg:grid-cols-2">
                   <Field label="Name" error={errors.name}>
@@ -245,7 +250,7 @@ export default function Booking() {
             )}
 
             {/* Contact fallback */}
-            <div className="bg-surface-1 border border-gold-400/[.12] rounded-card" style={{ padding: '30px 28px' }}>
+            <div className="r-rise bg-surface-1 border border-gold-400/[.12] rounded-card" style={{ padding: '30px 28px', animationDelay: '0.12s' }}>
               <div
                 className="font-sans font-semibold uppercase text-[#9c8d7c] mb-[22px]"
                 style={{ fontSize: '11px', letterSpacing: '.22em' }}

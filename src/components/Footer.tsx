@@ -88,7 +88,7 @@ export default function Footer() {
           <div className="lg:hidden">
             {/* Logo + social icons */}
             <div className="flex items-center justify-between mb-[14px]">
-              <img src="/logo.png" alt="Ras Kawintseb" className="w-auto" style={{ height: '34px' }} />
+              <img src="/logo.webp" alt="Ras Kawintseb" className="w-auto" style={{ height: '34px' }} />
               <div className="flex items-center gap-3">
                 {SOCIALS.map(({ label, href, Icon }) => (
                   <SocialIcon key={label} href={href} label={label}><Icon /></SocialIcon>
@@ -119,7 +119,7 @@ export default function Footer() {
           <div className="hidden lg:flex items-center justify-between gap-10 flex-wrap">
             {/* Logo + tagline */}
             <div className="flex items-center gap-[18px]">
-              <img src="/logo.png" alt="Ras Kawintseb" className="w-auto" style={{ height: '40px' }} />
+              <img src="/logo.webp" alt="Ras Kawintseb" className="w-auto" style={{ height: '40px' }} />
               <span
                 className="font-sans font-semibold uppercase text-[#9c8d7c]"
                 style={{ fontSize: '11px', letterSpacing: '.26em' }}

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Performance } from '../data/types'
 import { PERFORMANCES } from '../data/performances'
+import { useInView } from '../hooks/useInView'
 
 function perfSubtitle(p: Performance): string | null {
   if (p.location && p.date) return `${p.location} · ${p.date}`
@@ -10,8 +11,12 @@ function perfSubtitle(p: Performance): string | null {
 // ── Ethiopia Map ─────────────────────────────────────────────────────────────
 
 function EthiopiaMap() {
+  // No own observer: the m-* sequence inherits .in-view from the surrounding
+  // map-intro group, so it starts the moment "The Holy City, Outward / From
+  // Shashemene to the world" reveals — while that block is on screen — rather
+  // than once you've scrolled all the way down to the tall map itself.
   return (
-    <div className="w-full overflow-x-auto">
+    <div className="relative w-full overflow-x-auto">
       <svg
         viewBox="0 130 760 600"
         xmlns="http://www.w3.org/2000/svg"
@@ -31,18 +36,12 @@ function EthiopiaMap() {
         </defs>
 
         {/* Glow behind origin */}
-        <circle cx="310" cy="430" r="230" fill="url(#ras-glow)" />
-
-        {/* Concentric rings from Shashemene */}
-        <g fill="none" stroke="#C98A2B" strokeWidth="1.2">
-          <circle cx="310" cy="430" r="80"  strokeOpacity=".85" />
-          <circle cx="310" cy="430" r="150" strokeOpacity=".60" />
-          <circle cx="310" cy="430" r="220" strokeOpacity=".38" />
-          <circle cx="310" cy="430" r="300" strokeOpacity=".20" />
-        </g>
+        <circle className="m-fade" cx="310" cy="430" r="230" fill="url(#ras-glow)" />
 
         {/* Ethiopia outline — path + transform taken directly from reference design */}
         <path
+          className="m-fade"
+          style={{ animationDelay: '0.12s' }}
           transform="translate(-18.6,53.35) scale(1.55)"
           d="M172,102 L185,111 L200,106 L230,110 L254,112 L264,140 L270,160 L276,174 L269,186 L286,191 L295,203 L287,218 L303,223 L321,250 L425,270 L332,326 L295,358 L270,373 L225,391 L215,396 L205,381 L162,376 L140,361 L120,343 L107,318 L95,296 L62,270 L75,258 L85,238 L90,216 L95,200 L107,170 L121,150 L135,131 L148,118 Z"
           fill="url(#ras-mapfill)"
@@ -51,12 +50,20 @@ function EthiopiaMap() {
           strokeOpacity=".55"
         />
 
-        {/* Dotted reach lines to international locations */}
-        <line x1="310" y1="470" x2="660" y2="305" stroke="#F0AE1E" strokeOpacity=".32" strokeDasharray="2 5" strokeLinecap="round" />
-        <line x1="310" y1="470" x2="665" y2="595" stroke="#F0AE1E" strokeOpacity=".32" strokeDasharray="2 5" strokeLinecap="round" />
+        {/* Concentric rings from Shashemene — ripple outward after the hub lights */}
+        <g fill="none" stroke="#C98A2B" strokeWidth="1.2">
+          <circle className="m-ring" style={{ animationDelay: '0.55s' }} cx="310" cy="430" r="80"  strokeOpacity=".85" />
+          <circle className="m-ring" style={{ animationDelay: '0.7s' }}  cx="310" cy="430" r="150" strokeOpacity=".60" />
+          <circle className="m-ring" style={{ animationDelay: '0.85s' }} cx="310" cy="430" r="220" strokeOpacity=".38" />
+          <circle className="m-ring" style={{ animationDelay: '1s' }}    cx="310" cy="430" r="300" strokeOpacity=".20" />
+        </g>
+
+        {/* Dotted reach lines to international locations — draw outward from the hub */}
+        <line className="m-draw" style={{ animationDelay: '1.15s' }} x1="310" y1="470" x2="660" y2="305" stroke="#F0AE1E" strokeOpacity=".32" strokeDasharray="2 5" strokeLinecap="round" />
+        <line className="m-draw" style={{ animationDelay: '1.3s' }}  x1="310" y1="470" x2="665" y2="595" stroke="#F0AE1E" strokeOpacity=".32" strokeDasharray="2 5" strokeLinecap="round" />
 
         {/* Toured cities */}
-        <g fill="#C98A2B" fontFamily="'Hanken Grotesk', sans-serif" fontSize="13.5">
+        <g className="m-fade" style={{ animationDelay: '0.85s' }} fill="#C98A2B" fontFamily="'Hanken Grotesk', sans-serif" fontSize="13.5">
           <circle cx="332.8" cy="294.9" r="4" /><text x="341"  y="299"                     fill="#CDBFA9">Mekelle</text>
           <circle cx="296.1" cy="279.4" r="4" /><text x="288"  y="275" textAnchor="end"    fill="#CDBFA9">Aksum</text>
           <circle cx="322.4" cy="273.2" r="4" /><text x="322"  y="259" textAnchor="middle" fill="#CDBFA9">Adowa</text>
@@ -73,24 +80,27 @@ function EthiopiaMap() {
           <text x="306" y="411" textAnchor="end" fontWeight="600" fill="#EFE6D6">Addis Ababa</text>
         </g>
 
-        {/* Shashemene — hub */}
-        <line x1="310" y1="470" x2="310" y2="556" stroke="#F0AE1E" strokeOpacity=".5" />
-        <circle cx="310" cy="470" r="10" fill="#F0AE1E" />
-        <circle cx="310" cy="470" r="19" fill="none" stroke="#F0AE1E" strokeOpacity=".5" />
-        <text x="310" y="578" textAnchor="middle" fontFamily="'DM Serif Display', serif"     fontSize="22" fill="#F0AE1E">Shashemene</text>
-        <text x="310" y="597" textAnchor="middle" fontFamily="'Hanken Grotesk', sans-serif"  fontSize="11" fontWeight="600" letterSpacing=".18em" fill="#C9A86B">SPIRITUAL HOME OF RASTAFARI</text>
+        {/* Shashemene — hub (lights up first) */}
+        <line className="m-fade" style={{ animationDelay: '0.45s' }} x1="310" y1="470" x2="310" y2="556" stroke="#F0AE1E" strokeOpacity=".5" />
+        <circle className="m-pop" style={{ animationDelay: '0.4s' }} cx="310" cy="470" r="10" fill="#F0AE1E" />
+        <circle className="m-pop" style={{ animationDelay: '0.5s' }} cx="310" cy="470" r="19" fill="none" stroke="#F0AE1E" strokeOpacity=".5" />
+        <text className="m-fade" style={{ animationDelay: '1s' }} x="310" y="578" textAnchor="middle" fontFamily="'DM Serif Display', serif"     fontSize="22" fill="#F0AE1E">Shashemene</text>
+        <text className="m-fade" style={{ animationDelay: '1.1s' }} x="310" y="597" textAnchor="middle" fontFamily="'Hanken Grotesk', sans-serif"  fontSize="11" fontWeight="600" letterSpacing=".18em" fill="#C9A86B">SPIRITUAL HOME OF RASTAFARI</text>
 
-        {/* International nodes */}
+        {/* International nodes — pop in as the reach lines arrive */}
         <g fontFamily="'Hanken Grotesk', sans-serif">
-          <circle cx="660" cy="305" r="6"  fill="#F0AE1E" />
-          <circle cx="660" cy="305" r="12" fill="none" stroke="#F0AE1E" strokeOpacity=".4" />
-          <text x="646" y="302" textAnchor="end" fontSize="16" fontWeight="700" fill="#F0AE1E">Djibouti</text>
-          <text x="646" y="319" textAnchor="end" fontSize="12"                  fill="#9c8d7c">2025</text>
-
-          <circle cx="665" cy="595" r="6"  fill="#F0AE1E" />
-          <circle cx="665" cy="595" r="12" fill="none" stroke="#F0AE1E" strokeOpacity=".4" />
-          <text x="651" y="592" textAnchor="end" fontSize="16" fontWeight="700" fill="#F0AE1E">Mauritius</text>
-          <text x="651" y="609" textAnchor="end" fontSize="12"                  fill="#9c8d7c">2025 · Rastafari welcome</text>
+          <g className="m-node" style={{ animationDelay: '1.5s' }}>
+            <circle cx="660" cy="305" r="6"  fill="#F0AE1E" />
+            <circle cx="660" cy="305" r="12" fill="none" stroke="#F0AE1E" strokeOpacity=".4" />
+            <text x="646" y="302" textAnchor="end" fontSize="16" fontWeight="700" fill="#F0AE1E">Djibouti</text>
+            <text x="646" y="319" textAnchor="end" fontSize="12"                  fill="#9c8d7c">2025</text>
+          </g>
+          <g className="m-node" style={{ animationDelay: '1.65s' }}>
+            <circle cx="665" cy="595" r="6"  fill="#F0AE1E" />
+            <circle cx="665" cy="595" r="12" fill="none" stroke="#F0AE1E" strokeOpacity=".4" />
+            <text x="651" y="592" textAnchor="end" fontSize="16" fontWeight="700" fill="#F0AE1E">Mauritius</text>
+            <text x="651" y="609" textAnchor="end" fontSize="12"                  fill="#9c8d7c">2025 · Rastafari welcome</text>
+          </g>
         </g>
       </svg>
     </div>
@@ -101,30 +111,33 @@ function EthiopiaMap() {
 
 export default function Performances() {
   const [timelineOpen, setTimelineOpen] = useState(false)
+  const head = useInView<HTMLDivElement>()
+  const timeline = useInView<HTMLDivElement>()
+  const mapText = useInView<HTMLDivElement>()
 
   return (
     <section id="live" className="relative bg-surface-1 overflow-hidden border-t border-gold-400/10 scroll-mt-16">
       <div className="noise absolute inset-0 z-[6] pointer-events-none" style={{ opacity: 0.13 }} />
 
       <div className="relative z-[2] px-7 py-20 pb-24 lg:px-[100px] lg:pt-[128px] lg:pb-[160px]">
-        <div className="lg:max-w-[1020px] lg:mx-auto">
+        <div ref={head.ref} className={`lg:max-w-[1020px] lg:mx-auto ${head.inView ? 'in-view' : ''}`}>
 
           {/* Header */}
           <div className="flex items-center mb-[18px] lg:mb-6" style={{ gap: '14px' }}>
-            <span className="block bg-gold-400 w-[30px] lg:w-[46px]" style={{ height: '2px' }} />
-            <span className="font-sans font-semibold uppercase text-gold-600" style={{ fontSize: '13px', letterSpacing: '.30em' }}>
+            <span className="r-line block bg-gold-400 w-[30px] lg:w-[46px]" style={{ height: '2px' }} />
+            <span className="r-rise font-sans font-semibold uppercase text-gold-600" style={{ fontSize: '13px', letterSpacing: '.30em', animationDelay: '0.15s' }}>
               Live
             </span>
           </div>
           <h2
-            className="font-serif font-normal text-sand-50"
-            style={{ fontSize: 'clamp(42px, 5vw, 62px)', lineHeight: '1.0', letterSpacing: '-0.015em' }}
+            className="r-rise font-serif font-normal text-sand-50"
+            style={{ fontSize: 'clamp(42px, 5vw, 62px)', lineHeight: '1.0', letterSpacing: '-0.015em', animationDelay: '0.25s' }}
           >
             Performances
           </h2>
 
           {/* Upcoming slot */}
-          <div className="mt-8 lg:mt-11 flex items-start lg:items-center gap-[16px] lg:gap-[22px] bg-surface-card border border-gold-400/[.18] rounded-card px-[18px] py-5 lg:px-[30px] lg:py-[26px]">
+          <div className="r-rise mt-8 lg:mt-11 flex items-start lg:items-center gap-[16px] lg:gap-[22px] bg-surface-card border border-gold-400/[.18] rounded-card px-[18px] py-5 lg:px-[30px] lg:py-[26px]" style={{ animationDelay: '0.4s' }}>
             <div className="flex-none self-stretch flex flex-col rounded-sharp overflow-hidden" style={{ width: '4px' }}>
               <span className="flex-1 bg-rasta-red" />
               <span className="flex-1 bg-rasta-gold" />
@@ -157,10 +170,10 @@ export default function Performances() {
           </div>
 
           {/* Collapsible timeline */}
-          <div className="mt-[44px] lg:mt-[56px]">
+          <div ref={timeline.ref} className={`mt-[44px] lg:mt-[56px] ${timeline.inView ? 'in-view' : ''}`}>
             <button
               onClick={() => setTimelineOpen(o => !o)}
-              className="w-full flex items-center justify-between text-left"
+              className="r-rise w-full flex items-center justify-between text-left"
               style={{
                 background: 'none',
                 border: 'none',
@@ -212,7 +225,8 @@ export default function Performances() {
                   return (
                     <div
                       key={`${p.year}-${i}`}
-                      className={['relative lg:flex lg:gap-[30px]', isLast ? '' : 'pb-[24px] lg:pb-[34px]'].join(' ')}
+                      className={['r-rise relative lg:flex lg:gap-[30px]', isLast ? '' : 'pb-[24px] lg:pb-[34px]'].join(' ')}
+                      style={{ animationDelay: `${i * 0.06}s` }}
                     >
                       <div
                         className={[
@@ -259,22 +273,22 @@ export default function Performances() {
           </div>
 
           {/* Map — part of this section, not a new one */}
-          <div className="mt-[52px] lg:mt-[64px]">
+          <div ref={mapText.ref} className={`mt-[52px] lg:mt-[64px] ${mapText.inView ? 'in-view' : ''}`}>
             <div className="flex items-center mb-[14px]" style={{ gap: '10px' }}>
-              <span className="block bg-gold-400/40" style={{ width: '28px', height: '1px' }} />
-              <span className="font-sans font-semibold uppercase text-[#9c8d7c]" style={{ fontSize: '11px', letterSpacing: '.26em' }}>
+              <span className="r-line block bg-gold-400/40" style={{ width: '28px', height: '1px' }} />
+              <span className="r-rise font-sans font-semibold uppercase text-[#9c8d7c]" style={{ fontSize: '11px', letterSpacing: '.26em', animationDelay: '0.15s' }}>
                 The Holy City, Outward
               </span>
             </div>
             <p
-              className="font-serif font-normal text-sand-100 mb-5 lg:mb-6"
-              style={{ fontSize: 'clamp(26px, 3vw, 38px)', lineHeight: '1.05', letterSpacing: '-0.015em' }}
+              className="r-rise font-serif font-normal text-sand-100 mb-5 lg:mb-6"
+              style={{ fontSize: 'clamp(26px, 3vw, 38px)', lineHeight: '1.05', letterSpacing: '-0.015em', animationDelay: '0.25s' }}
             >
               From Shashemene to the world
             </p>
             <p
-              className="font-sans text-[#B5A691] mb-10 lg:mb-12 max-w-[600px]"
-              style={{ fontSize: '16px', lineHeight: '1.75' }}
+              className="r-rise font-sans text-[#B5A691] mb-10 lg:mb-12 max-w-[600px]"
+              style={{ fontSize: '16px', lineHeight: '1.75', animationDelay: '0.35s' }}
             >
               From <span className="text-gold-400 font-medium">Shashemene</span> — the spiritual home of Rastafari —
               Ras Kawintseb and the Aeti+oPHrika Reggaestra have carried roots reggae across Ethiopia,

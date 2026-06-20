@@ -16,7 +16,7 @@ export default function Navbar() {
     <>
       <header className="fixed top-0 left-0 right-0 z-50 h-16 flex items-center justify-between px-7 md:px-14 bg-surface border-b border-gold-400/10">
         <a href="#hero" className="flex-none" onClick={() => setOpen(false)}>
-          <img src="/logo.png" alt="Ras Kawintseb" className="h-9 w-auto" />
+          <img src="/logo.webp" alt="Ras Kawintseb" className="h-9 w-auto" />
         </a>
 
         {/* Desktop nav */}
