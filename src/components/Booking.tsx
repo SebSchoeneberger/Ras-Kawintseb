@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import type { ReactNode, FormEvent } from 'react'
+import { useRef, useState } from 'react'
+import type { ReactNode, SubmitEvent } from 'react'
 import FootprintSVG from './FootprintSVG'
 import { useInView } from '../hooks/useInView'
 
@@ -12,6 +12,14 @@ interface FormData {
 }
 
 type FieldErrors = Partial<Record<keyof FormData, string>>
+
+const WEB3FORMS_ACCESS_KEY = import.meta.env.VITE_WEB3FORMS_KEY
+
+// Shown in the contact panel and offered as a fallback when a send fails — keep these
+// single-sourced so switching inboxes never leaves a stale address behind.
+// CONTACT_EMAIL is the primary inbox; point the Web3Forms key at this same address.
+const CONTACT_EMAIL = 'raskawintseb707@gmail.com'
+const CONTACT_EMAIL_ALT = 'associationtousdesartistes@hotmail.com'
 
 const EMPTY: FormData = { name: '', email: '', org: '', date: '', message: '' }
 
@@ -64,6 +72,10 @@ export default function Booking() {
   const [form, setForm] = useState<FormData>(EMPTY)
   const [errors, setErrors] = useState<FieldErrors>({})
   const [submitted, setSubmitted] = useState(false)
+  const [sending, setSending] = useState(false)
+  const [sendError, setSendError] = useState(false)
+  // A ref, not state: this must be readable synchronously, before React re-renders.
+  const inFlight = useRef(false)
   const head = useInView<HTMLDivElement>()
   const body = useInView<HTMLDivElement>()
 
@@ -71,17 +83,53 @@ export default function Booking() {
     return ({ target: { value } }: { target: { value: string } }) => {
       setForm(f => ({ ...f, [key]: value }))
       if (errors[key]) setErrors(e => ({ ...e, [key]: undefined }))
+      if (sendError) setSendError(false)
     }
   }
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault()
     const errs = validate(form)
     if (Object.keys(errs).length > 0) {
       setErrors(errs)
       return
     }
-    setSubmitted(true)
+    // A click landing before the disabled button re-renders would otherwise send twice.
+    if (inFlight.current) return
+
+    // Honeypot: hidden checkbox real users never see; bots that tick it get flagged as spam.
+    const botcheck = (e.currentTarget.elements.namedItem('botcheck') as HTMLInputElement | null)?.checked ?? false
+    inFlight.current = true
+    setSending(true)
+    setSendError(false)
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_ACCESS_KEY,
+          subject: `Booking request from ${form.name}`,
+          from_name: 'Ras Kawintseb Website',
+          name: form.name,
+          email: form.email,
+          organization: form.org,
+          event_date: form.date,
+          message: form.message,
+          botcheck,
+        }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        setSubmitted(true)
+      } else {
+        setSendError(true)
+      }
+    } catch {
+      setSendError(true)
+    } finally {
+      inFlight.current = false
+      setSending(false)
+    }
   }
 
   return (
@@ -175,11 +223,20 @@ export default function Booking() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} noValidate className="r-rise flex flex-col gap-[22px]">
+                <input
+                  type="checkbox"
+                  name="botcheck"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  className="hidden"
+                />
                 {/* Name + Email */}
                 <div className="grid grid-cols-1 gap-[22px] lg:grid-cols-2">
                   <Field label="Name" error={errors.name}>
                     <input
                       type="text"
+                      autoComplete="name"
                       placeholder="Your name"
                       value={form.name}
                       onChange={set('name')}
@@ -190,6 +247,7 @@ export default function Booking() {
                   <Field label="Email" error={errors.email}>
                     <input
                       type="email"
+                      autoComplete="email"
                       placeholder="your@email.com"
                       value={form.email}
                       onChange={set('email')}
@@ -204,6 +262,7 @@ export default function Booking() {
                   <Field label="Organization / Venue" error={errors.org}>
                     <input
                       type="text"
+                      autoComplete="organization"
                       placeholder="Venue or festival"
                       value={form.org}
                       onChange={set('org')}
@@ -238,14 +297,25 @@ export default function Booking() {
                 {/* Submit */}
                 <button
                   type="submit"
-                  className="w-full lg:w-auto lg:self-start mt-[6px] inline-flex items-center justify-center gap-[11px] bg-gold-400 text-surface font-sans font-bold rounded-sharp cursor-pointer transition-all hover:bg-[#F8BE1C] hover:-translate-y-px hover:shadow-[0_8px_24px_rgba(240,174,30,.28)]"
+                  disabled={sending}
+                  className="w-full lg:w-auto lg:self-start mt-[6px] inline-flex items-center justify-center gap-[11px] bg-gold-400 text-surface font-sans font-bold rounded-sharp cursor-pointer transition-all hover:bg-[#F8BE1C] hover:-translate-y-px hover:shadow-[0_8px_24px_rgba(240,174,30,.28)] disabled:opacity-60 disabled:cursor-wait disabled:hover:translate-y-0 disabled:hover:shadow-none"
                   style={{ padding: '17px 34px', fontSize: '15px', letterSpacing: '.01em' }}
                 >
-                  Send Booking Request
+                  {sending ? 'Sending…' : 'Send Booking Request'}
                   <svg width="15" height="12" viewBox="0 0 15 12" fill="none" aria-hidden="true">
                     <path d="M1 6H13M8.5 1.5L13 6L8.5 10.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </button>
+
+                {sendError && (
+                  <p role="alert" className="font-sans text-red-400" style={{ fontSize: '14px', lineHeight: '1.5' }}>
+                    Something went wrong sending your request. Please try again, or email us directly at{' '}
+                    <a href={`mailto:${CONTACT_EMAIL}`} className="underline text-sand-50">
+                      {CONTACT_EMAIL}
+                    </a>
+                    .
+                  </p>
+                )}
               </form>
             )}
 
@@ -259,7 +329,8 @@ export default function Booking() {
               </div>
 
               <div className="flex flex-col gap-5">
-                <a href="mailto:associationtousdesartistes@hotmail.com" className="flex items-center gap-[14px] no-underline group">
+                {/* Two addresses share one icon, so each needs its own link rather than one wrapping row. */}
+                <div className="flex items-center gap-[14px] group">
                   <span className="flex-none w-[38px] h-[38px] flex items-center justify-center rounded-full border border-gold-400/30 transition-colors group-hover:border-gold-400/60">
                     <svg width="17" height="17" viewBox="0 0 20 20" fill="none" aria-hidden="true">
                       <rect x="2" y="4" width="16" height="12" rx="2" stroke="#F0AE1E" strokeWidth="1.6" />
@@ -268,9 +339,22 @@ export default function Booking() {
                   </span>
                   <span className="min-w-0">
                     <span className="block font-sans font-semibold uppercase text-[#7d6f60]" style={{ fontSize: '11px', letterSpacing: '.1em' }}>Email</span>
-                    <span className="block font-sans font-medium text-sand-50 break-all" style={{ fontSize: '15px' }}>associationtousdesartistes@hotmail.com</span>
+                    <a
+                      href={`mailto:${CONTACT_EMAIL}`}
+                      className="block font-sans font-medium text-sand-50 break-all no-underline hover:text-gold-400 transition-colors"
+                      style={{ fontSize: '15px' }}
+                    >
+                      {CONTACT_EMAIL}
+                    </a>
+                    <a
+                      href={`mailto:${CONTACT_EMAIL_ALT}`}
+                      className="block font-sans text-sand-400 break-all no-underline hover:text-gold-400 transition-colors mt-[3px]"
+                      style={{ fontSize: '13.5px' }}
+                    >
+                      {CONTACT_EMAIL_ALT}
+                    </a>
                   </span>
-                </a>
+                </div>
 
                 <a href="https://wa.me/251910970103" target="_blank" rel="noopener noreferrer" className="flex items-center gap-[14px] no-underline group">
                   <span className="flex-none w-[38px] h-[38px] flex items-center justify-center rounded-full border border-gold-400/30 transition-colors group-hover:border-gold-400/60">
