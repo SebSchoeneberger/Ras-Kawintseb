@@ -16,7 +16,7 @@ type FieldErrors = Partial<Record<keyof FormData, string>>
 const EMPTY: FormData = { name: '', email: '', org: '', date: '', message: '' }
 
 const FORMATS = [
-  { title: 'Full Band', desc: 'With the Aetio+PHrika Reggaestra — the complete roots-reggae lineup.' },
+  { title: 'Full Band', desc: 'With his Aetio+PHrika Reggaestra — the complete roots-reggae lineup.' },
   { title: 'Acoustic', desc: 'Acoustic roots with a 2–3 piece ensemble.' },
   { title: 'Solo', desc: 'Ras Kawintseb performing on his own.' },
 ]

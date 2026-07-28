@@ -13,7 +13,7 @@ const G = '/Gallery/Screen%20Shot%202026-06-20%20at%20'
 const PHOTOS: Photo[] = [
   // Row 1 — hero + stacked pair
   { src: `${G}20.10.49.webp`,                                label: 'Live',                   caption: 'Live on stage',                        pos: 'center 35%'    },
-  { src: `${G}20.01.44.webp`,                                label: 'Drumming',               caption: 'Roots drumming',                       pos: 'center center' },
+  { src: `${G}20.01.44.webp`,                                label: 'Nyabinghi Drumming',               caption: 'Nyabinghi drumming',                       pos: 'center center' },
   { src: `${G}20.12.35.webp`,                                label: 'Portrait',               caption: 'Portrait',                             pos: 'center 28%'    },
   // Row 2 — 3 equal
   { src: `${G}20.01.17.webp`,                                label: 'Live · Peter Tosh',      caption: 'Tribute to Peter Tosh · Alliance Ethio-Française', pos: 'center center' },

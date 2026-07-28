@@ -305,9 +305,9 @@ export default function Music() {
           className={`mt-14 lg:mt-[56px] lg:max-w-[1080px] lg:mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-[36px] items-start ${albumsGrid.inView ? 'in-view' : ''}`}
         >
           <AlbumCard
-            eyebrow="First Album · 2021"
+            eyebrow="First Album · 2016"
             title="Touch of Tsion"
-            descriptor={<>Debut album, released <span className="text-sand-50">2021</span>.</>}
+            descriptor={<>Debut album, released <span className="text-sand-50">2016</span>.</>}
             image="/TouchOfTsionAlbum.webp"
             spotifyId="0MbN49luErsrkwkeRe1BeE"
             youtubeUrl="https://youtu.be/rLUvJ_chc4w?si=Ddqrw7XTXVMk54XK"

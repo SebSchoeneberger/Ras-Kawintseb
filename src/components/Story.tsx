@@ -56,7 +56,7 @@ export default function Story() {
               </div>
             </div>
             <p className="r-rise mt-4 font-sans font-medium text-sand-400" style={{ fontSize: '12px', letterSpacing: '.04em', animationDelay: '0.45s' }}>
-              Ras Kawintseb — performing live on guitar with his band Aeti+oPHrika Reggaestra.
+              Ras Kawintseb — performing live on guitar with his Aeti+oPHrika Reggaestra.
             </p>
             <a
               href="/Bio Ras Kawintseb.pdf"
@@ -95,7 +95,7 @@ export default function Story() {
             </p>
             <br/>
             <p className="r-rise font-sans text-[#C7B9A6] lg:max-w-[580px]" style={{ fontSize: '18px', lineHeight: '1.85', animationDelay: '0.6s' }}>
-              And he does not carry the message alone. Alongside him stands the Aeti+oPHrika Reggaestra — not a backing band, but a reggaestra: a full ensemble that turns every performance into a gathering, a sound built to move both feet and spirit.            </p>
+              And he does not carry the message alone. Alongside him stands his Aeti+oPHrika Reggaestra — not a backing band, but a reggaestra: a full ensemble that turns every performance into a gathering, a sound built to move both feet and spirit.            </p>
             <br/>
             {/* <p className="font-sans text-[#C7B9A6] lg:max-w-[580px]" style={{ fontSize: '18px', lineHeight: '1.85' }}>
             In 2023, he gave significant time to service through the Pan African School (DEUG 27), working with young Ethiopians and Sudanese refugee children — introducing them to singing, group performance, and the history and spirit of Pan-Afrikanism. For Ras Kawintseb, the music and the message have always been one and the same.            </p> */}

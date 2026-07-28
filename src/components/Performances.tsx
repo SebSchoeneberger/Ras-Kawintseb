@@ -61,6 +61,7 @@ function EthiopiaMap() {
         {/* Dotted reach lines to international locations — draw outward from the hub */}
         <line className="m-draw" style={{ animationDelay: '1.15s' }} x1="310" y1="470" x2="660" y2="305" stroke="#F0AE1E" strokeOpacity=".32" strokeDasharray="2 5" strokeLinecap="round" />
         <line className="m-draw" style={{ animationDelay: '1.3s' }}  x1="310" y1="470" x2="665" y2="595" stroke="#F0AE1E" strokeOpacity=".32" strokeDasharray="2 5" strokeLinecap="round" />
+        <line className="m-draw" style={{ animationDelay: '1.45s' }} x1="310" y1="470" x2="328" y2="175" stroke="#F0AE1E" strokeOpacity=".32" strokeDasharray="2 5" strokeLinecap="round" />
 
         {/* Toured cities */}
         <g className="m-fade" style={{ animationDelay: '0.85s' }} fill="#C98A2B" fontFamily="'Hanken Grotesk', sans-serif" fontSize="13.5">
@@ -73,6 +74,7 @@ function EthiopiaMap() {
           <circle cx="333.2" cy="349.1" r="4" /><text x="341"  y="353"                     fill="#CDBFA9">Dessie</text>
           <circle cx="399.9" cy="411.1" r="4" /><text x="408"  y="415"                     fill="#CDBFA9">Dire Dawa</text>
           <circle cx="353.4" cy="428.2" r="4" /><text x="361"  y="432"                     fill="#CDBFA9">Nazareth</text>
+          <circle cx="158"   cy="388"   r="4" /><text x="150"  y="392" textAnchor="end"    fill="#CDBFA9">Asosa</text>
           <circle cx="155"   cy="457.6" r="4" /><text x="147"  y="461" textAnchor="end"    fill="#CDBFA9">Gambela</text>
           <circle cx="237.2" cy="446.7" r="4" /><text x="229"  y="450" textAnchor="end"    fill="#CDBFA9">Jimma</text>
           <circle cx="286.8" cy="499.5" r="4" /><text x="278"  y="495" textAnchor="end"    fill="#CDBFA9">Arba Minch</text>
@@ -100,6 +102,12 @@ function EthiopiaMap() {
             <circle cx="665" cy="595" r="12" fill="none" stroke="#F0AE1E" strokeOpacity=".4" />
             <text x="651" y="592" textAnchor="end" fontSize="16" fontWeight="700" fill="#F0AE1E">Mauritius</text>
             <text x="651" y="609" textAnchor="end" fontSize="12"                  fill="#9c8d7c">2025 · Rastafari welcome</text>
+          </g>
+          <g className="m-node" style={{ animationDelay: '1.8s' }}>
+            <circle cx="328" cy="175" r="6"  fill="#F0AE1E" />
+            <circle cx="328" cy="175" r="12" fill="none" stroke="#F0AE1E" strokeOpacity=".4" />
+            <text x="314" y="172" textAnchor="end" fontSize="16" fontWeight="700" fill="#F0AE1E">Asmara</text>
+            <text x="314" y="189" textAnchor="end" fontSize="12"                  fill="#9c8d7c">Eritrea · 1997 · Trade fairs</text>
           </g>
         </g>
       </svg>
@@ -291,8 +299,8 @@ export default function Performances() {
               style={{ fontSize: '16px', lineHeight: '1.75', animationDelay: '0.35s' }}
             >
               From <span className="text-gold-400 font-medium">Shashemene</span> — the spiritual home of Rastafari —
-              Ras Kawintseb and the Aeti+oPHrika Reggaestra have carried roots reggae across Ethiopia,
-              from Aksum in the north to Arba Minch in the south. In 2025 the journey reached beyond the
+              Ras Kawintseb and his Aeti+oPHrika Reggaestra have carried roots reggae across Ethiopia,
+              from Aksum in the north to Arba Minch in the south — and across the border to Asmara, Eritrea. In 2025 the journey reached beyond the
               highlands, with shows in Djibouti and Mauritius.
             </p>
             <EthiopiaMap />
@@ -320,7 +328,7 @@ export default function Performances() {
                   style={{ width: '8px', height: '8px', boxShadow: '0 0 0 3px rgba(240,174,30,.18)' }}
                 />
                 <span className="font-sans font-semibold uppercase text-[#9c8d7c]" style={{ fontSize: '10.5px', letterSpacing: '.16em' }}>
-                  International · 2025
+                  International
                 </span>
               </div>
             </div>

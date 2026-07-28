@@ -11,7 +11,7 @@ export const PERFORMANCES: Performance[] = [
   },
   {
     year: 2025,
-    title: 'Tribute to Peter Tosh — with Aeti+oPHrika Reggaestra',
+    title: 'Tribute to Peter Tosh — with his Aeti+oPHrika Reggaestra',
     location: 'Addis Ababa',
     date: 'December 2025',
     note: 'A tribute years in the making to the ‘Stepping Razor’ — Peter Tosh’s anthems played live, hosted at the Alliance Ethio-Française and recognised by Tosh’s official channels.',
@@ -65,20 +65,21 @@ export const PERFORMANCES: Performance[] = [
   },
   {
     year: 1997,
-    title: 'Meskel Square reggae event',
-    location: 'Addis Ababa',
+    title: 'Ethio-Eritrean Trade Fairs',
+    location: 'Asmara, Eritrea',
     date: '1997',
-    note: 'An early reggae gathering in the heart of Addis Ababa.',
+    note: 'Carrying the music to the cross-border trade fairs between Ethiopia and Eritrea.',
   },
   {
     year: 1997,
-    title: 'Ethio-Eritrean Trade Fairs',
+    title: 'Adowa Victory Celebration — Meskel Square',
+    location: 'Addis Ababa',
     date: '1997',
-    note: 'Carrying the music to the cross-border trade fairs between Ethiopia and Eritrea.',
+    note: 'Over 80,000 people gathered in the heart of Addis Ababa to celebrate the Victory of Adowa — sharing the stage with Junior Delgado, IQulah and Steve Wright.',
   },
 ]
 
 export const TOURED_CITIES: string[] = [
   'Shashemene', 'Addis Ababa', 'Nazareth', 'Dessie', 'Mekelle', 'Aksum',
-  'Adowa', 'Adigrat', 'Jimma', 'Gambela', 'Dire Dawa', 'Arba Minch', 'Gondar', 'Bahir Dar',
+  'Adowa', 'Adigrat', 'Jimma', 'Gambela', 'Asosa', 'Dire Dawa', 'Arba Minch', 'Gondar', 'Bahir Dar',
 ]
