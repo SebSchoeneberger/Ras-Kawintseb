@@ -7,24 +7,27 @@ import Gallery from './components/Gallery'
 import Performances from './components/Performances'
 import Booking from './components/Booking'
 import Footer from './components/Footer'
+import EventSchema from './components/EventSchema'
 
 export default function App() {
   return (
     <div className="bg-surface font-sans">
       <Navbar />
-      <Hero />
-      <Story />
+      <main id="main">
+        <Hero />
+        <Story />
 
-      <Music />
-      <Watch />
+        <Music />
+        <Watch />
 
-      <Gallery />
+        <Gallery />
 
-      <Performances />
+        <Performances />
 
-      <Booking />
-
+        <Booking />
+      </main>
       <Footer />
+      <EventSchema />
     </div>
   )
 }

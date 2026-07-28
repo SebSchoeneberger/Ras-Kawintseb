@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useInView } from '../hooks/useInView'
 
 interface Photo {
@@ -98,6 +98,17 @@ export default function Gallery() {
   const [expanded, setExpanded] = useState(false)
   const header = useInView<HTMLDivElement>()
   const grid = useInView<HTMLDivElement>()
+  const dialogRef = useRef<HTMLDivElement>(null)
+  const closeBtnRef = useRef<HTMLButtonElement>(null)
+  const lightboxOpen = lightboxIdx !== null
+
+  // Move focus into the dialog on open, restore it on close
+  useEffect(() => {
+    if (!lightboxOpen) return
+    const prevFocus = document.activeElement as HTMLElement | null
+    closeBtnRef.current?.focus()
+    return () => prevFocus?.focus()
+  }, [lightboxOpen])
 
   useEffect(() => {
     if (lightboxIdx === null) return
@@ -106,6 +117,16 @@ export default function Gallery() {
       if (e.key === 'Escape')      setLightboxIdx(null)
       if (e.key === 'ArrowLeft')   setLightboxIdx(i => i !== null ? (i - 1 + PHOTOS.length) % PHOTOS.length : null)
       if (e.key === 'ArrowRight')  setLightboxIdx(i => i !== null ? (i + 1) % PHOTOS.length : null)
+      if (e.key === 'Tab') {
+        // Trap focus inside the dialog (visible buttons only)
+        const focusables = Array.from(dialogRef.current?.querySelectorAll<HTMLElement>('button') ?? [])
+          .filter(el => el.offsetParent !== null)
+        if (focusables.length === 0) return
+        const first = focusables[0]
+        const last = focusables[focusables.length - 1]
+        if (e.shiftKey && document.activeElement === first)      { e.preventDefault(); last.focus() }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus() }
+      }
     }
     window.addEventListener('keydown', handler)
     return () => { window.removeEventListener('keydown', handler); document.body.style.overflow = '' }
@@ -205,12 +226,17 @@ export default function Gallery() {
       {/* Lightbox */}
       {lightboxIdx !== null && activePhoto !== null && (
         <div
+          ref={dialogRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Photo: ${activePhoto.caption}`}
           className="fixed inset-0 z-50 flex items-center justify-center"
           style={{ background: 'rgba(11,7,5,.93)', backdropFilter: 'blur(3px)', padding: '20px' }}
           onClick={() => setLightboxIdx(null)}
         >
           {/* Close */}
           <button
+            ref={closeBtnRef}
             className="absolute top-5 right-5 lg:top-[34px] lg:right-[40px] flex items-center justify-center rounded-full text-sand-50 transition-all hover:bg-gold-400/10"
             style={{ width: '46px', height: '46px', fontSize: '20px', border: '1.5px solid rgba(239,230,214,.4)', background: 'transparent' }}
             onClick={e => { e.stopPropagation(); setLightboxIdx(null) }}
