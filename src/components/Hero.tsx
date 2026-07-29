@@ -35,6 +35,12 @@ export default function Hero() {
           </span>
           <FootprintSVG width={14} height={18} opacity={0.7} />
         </div>
+        <span
+          className="anim-rise block font-mono font-semibold uppercase text-[#9c8d7c] mt-[7px]"
+          style={{ fontSize: '12px', letterSpacing: '.22em', animationDelay: '0.75s' }}
+        >
+          Man from Moblissa
+        </span>
         <p className="anim-rise font-sans text-sand-200 mt-4" style={{ fontSize: '16px', lineHeight: '1.55', animationDelay: '0.85s' }}>
           Roots reggae from Zion — carried from the Ethiopian highlands to the world.
         </p>
@@ -92,6 +98,12 @@ export default function Hero() {
               </span>
               <FootprintSVG width={16} height={21} opacity={0.7} />
             </div>
+            <span
+              className="anim-rise block font-mono font-semibold uppercase text-[#9c8d7c] mt-[10px]"
+              style={{ fontSize: '14px', letterSpacing: '.22em', animationDelay: '0.82s' }}
+            >
+              Man from Moblissa
+            </span>
             <p className="anim-rise font-sans text-sand-200 mt-[26px]" style={{ fontSize: '19px', lineHeight: '1.55', maxWidth: '450px', animationDelay: '0.95s' }}>
               Roots reggae from Zion — carried from the Ethiopian highlands to the world.
             </p>

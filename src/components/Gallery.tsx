@@ -18,16 +18,16 @@ const PHOTOS: Photo[] = [
   // Row 2 — 3 equal
   { src: `${G}20.01.17.webp`,                                label: 'Live · Peter Tosh',      caption: 'Tribute to Peter Tosh · Alliance Ethio-Française', pos: 'center center' },
   { src: '/Gallery/Screenshot_20210820-231559_YouTube.webp', label: 'Interview',             caption: 'Ethiopian television',                 pos: 'center center' },
-  { src: `${G}20.00.23.webp`,                                label: 'Acoustic',               caption: 'Acoustic session',                     pos: 'center center' },
+  { src: `${G}20.00.23.webp`,                                label: 'Bass Guitar',               caption: 'Bass Guitar session',                     pos: 'center center' },
   // Extra row of 4
   { src: `${G}20.11.28.webp`,                                label: 'Live · Bob Marley',      caption: 'Bob Marley birthday celebration',       pos: 'center center' },
-  { src: `${G}20.00.59.webp`,                                label: 'Acoustic',               caption: 'Roots flute',                          pos: 'center top'    },
+  { src: `${G}20.00.59.webp`,                                label: 'Flute',               caption: 'Roots flute',                          pos: 'center top'    },
   { src: `${G}20.00.38.webp`,                                label: 'Portrait',               caption: 'Portrait',                             pos: 'center 32%'    },
   { src: `${G}20.11.07.webp`,                                label: 'Lalibela',               caption: 'Lalibela · Church of St. George',      pos: 'center center' },
   // Extra row of 3
-  { src: `${G}20.11.41.webp`,                                label: 'Acoustic',               caption: 'Acoustic session',                     pos: 'center top'    },
+  { src: `${G}20.11.41.webp`,                                label: 'Shashamane',               caption: 'Acoustic session in Shashamane',                     pos: 'center 42%'    },
   { src: `${G}20.13.21.webp`,                                label: 'Live',                   caption: 'Live on stage',                        pos: 'center center' },
-  { src: `${G}20.01.33.webp`,                                label: 'Backstage',              caption: 'Behind the scenes',                    pos: 'center center' },
+  { src: `${G}20.01.33.webp`,                                label: 'Shashamane',              caption: 'Behind the scenes with Alborosie',                    pos: 'center 25%'    },
 ]
 
 const CARD_BASE = 'r-rise group/card relative overflow-hidden rounded-card border border-gold-400/[.14] cursor-pointer transition-colors hover:border-gold-400/50'
