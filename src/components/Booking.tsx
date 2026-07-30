@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { ReactNode, SubmitEvent } from 'react'
 import FootprintSVG from './FootprintSVG'
 import { useInView } from '../hooks/useInView'
@@ -30,6 +30,12 @@ const FORMATS = [
 ]
 
 const TRANSITION = { transition: 'border-color .18s, background .18s, box-shadow .18s' }
+
+function scrollToEl(el: HTMLElement | null) {
+  if (!el) return
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  el.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' })
+}
 
 function validate(d: FormData): FieldErrors {
   const e: FieldErrors = {}
@@ -76,8 +82,17 @@ export default function Booking() {
   const [sendError, setSendError] = useState(false)
   // A ref, not state: this must be readable synchronously, before React re-renders.
   const inFlight = useRef(false)
+  // Wraps both the form and the success state, so it's the scroll target for the
+  // format cards on the way in and for the thank-you message on the way out.
+  const formPanel = useRef<HTMLDivElement>(null)
   const head = useInView<HTMLDivElement>()
   const body = useInView<HTMLDivElement>()
+
+  // The success message replaces a form the user has scrolled past, so it renders
+  // off-screen above them unless we bring it back into view.
+  useEffect(() => {
+    if (submitted) scrollToEl(formPanel.current)
+  }, [submitted])
 
   function set(key: keyof FormData) {
     return ({ target: { value } }: { target: { value: string } }) => {
@@ -176,9 +191,13 @@ export default function Booking() {
               </div>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:gap-[14px]">
                 {FORMATS.map((f, i) => (
-                  <div
+                  // Read as buttons, so they behave as buttons: clicking jumps to the form.
+                  <button
                     key={f.title}
-                    className="r-rise bg-surface-1 border border-gold-400/[.12] rounded-card"
+                    type="button"
+                    onClick={() => scrollToEl(formPanel.current)}
+                    aria-label={`${f.title} — go to the booking form`}
+                    className="r-rise w-full text-left bg-surface-1 border border-gold-400/[.12] rounded-card cursor-pointer transition-all hover:border-gold-400/40 hover:bg-[#221913] hover:-translate-y-px focus-visible:outline-none focus-visible:border-gold-400 focus-visible:shadow-[0_0_0_3px_rgba(240,174,30,.14)]"
                     style={{ padding: '18px 20px', animationDelay: `${0.52 + i * 0.08}s` }}
                   >
                     <span className="block bg-gold-400/70 mb-[13px]" style={{ width: '22px', height: '2px' }} />
@@ -188,7 +207,7 @@ export default function Booking() {
                     <div className="font-sans text-sand-400 mt-[7px]" style={{ fontSize: '13.5px', lineHeight: '1.5' }}>
                       {f.desc}
                     </div>
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>
@@ -198,126 +217,128 @@ export default function Booking() {
           <div ref={body.ref} className={`grid grid-cols-1 gap-10 mt-10 items-start lg:grid-cols-[1fr_332px] lg:gap-[54px] lg:mt-[50px] ${body.inView ? 'in-view' : ''}`}>
 
             {/* Form or success state */}
-            {submitted ? (
-              <div className="r-rise flex flex-col items-start gap-5 py-6">
-                <span className="flex items-center justify-center w-12 h-12 rounded-full border border-gold-400/40 bg-gold-400/[.08]">
-                  <svg width="20" height="16" viewBox="0 0 20 16" fill="none" aria-hidden="true">
-                    <path d="M1 8L7 14L19 2" stroke="#F0AE1E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </span>
-                <div>
-                  <h3 className="font-serif font-normal text-sand-50" style={{ fontSize: '28px', lineHeight: '1.1' }}>
-                    Thanks — we'll be in touch.
-                  </h3>
-                  <p className="font-sans text-sand-400 mt-3" style={{ fontSize: '16px', lineHeight: '1.6' }}>
-                    We usually respond within a few days.
-                  </p>
+            <div ref={formPanel} className="scroll-mt-24">
+              {submitted ? (
+                <div className="r-rise flex flex-col items-start gap-5 py-6">
+                  <span className="flex items-center justify-center w-12 h-12 rounded-full border border-gold-400/40 bg-gold-400/[.08]">
+                    <svg width="20" height="16" viewBox="0 0 20 16" fill="none" aria-hidden="true">
+                      <path d="M1 8L7 14L19 2" stroke="#F0AE1E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </span>
+                  <div>
+                    <h3 className="font-serif font-normal text-sand-50" style={{ fontSize: '28px', lineHeight: '1.1' }}>
+                      Thanks — we'll be in touch.
+                    </h3>
+                    <p className="font-sans text-sand-400 mt-3" style={{ fontSize: '16px', lineHeight: '1.6' }}>
+                      We usually respond within a few days.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => { setSubmitted(false); setForm(EMPTY); setErrors({}) }}
+                    className="font-mono font-medium uppercase text-[#9c8d7c] hover:text-sand-400 transition-colors mt-1"
+                    style={{ fontSize: '11px', letterSpacing: '.18em' }}
+                  >
+                    Send another request →
+                  </button>
                 </div>
-                <button
-                  onClick={() => { setSubmitted(false); setForm(EMPTY); setErrors({}) }}
-                  className="font-mono font-medium uppercase text-[#9c8d7c] hover:text-sand-400 transition-colors mt-1"
-                  style={{ fontSize: '11px', letterSpacing: '.18em' }}
-                >
-                  Send another request →
-                </button>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} noValidate className="r-rise flex flex-col gap-[22px]">
-                <input
-                  type="checkbox"
-                  name="botcheck"
-                  tabIndex={-1}
-                  autoComplete="off"
-                  aria-hidden="true"
-                  className="hidden"
-                />
-                {/* Name + Email */}
-                <div className="grid grid-cols-1 gap-[22px] lg:grid-cols-2">
-                  <Field label="Name" error={errors.name}>
-                    <input
-                      type="text"
-                      autoComplete="name"
-                      placeholder="Your name"
-                      value={form.name}
-                      onChange={set('name')}
-                      className={inputCls(form.name, !!errors.name)}
-                      style={TRANSITION}
-                    />
-                  </Field>
-                  <Field label="Email" error={errors.email}>
-                    <input
-                      type="email"
-                      autoComplete="email"
-                      placeholder="your@email.com"
-                      value={form.email}
-                      onChange={set('email')}
-                      className={inputCls(form.email, !!errors.email)}
-                      style={TRANSITION}
-                    />
-                  </Field>
-                </div>
-
-                {/* Organization + Event Date */}
-                <div className="grid grid-cols-1 gap-[22px] lg:grid-cols-2">
-                  <Field label="Organization / Venue" error={errors.org}>
-                    <input
-                      type="text"
-                      autoComplete="organization"
-                      placeholder="Venue or festival"
-                      value={form.org}
-                      onChange={set('org')}
-                      className={inputCls(form.org, !!errors.org)}
-                      style={TRANSITION}
-                    />
-                  </Field>
-                  <Field label="Event Date" error={errors.date}>
-                    <input
-                      type="text"
-                      placeholder="Approx. date or period"
-                      value={form.date}
-                      onChange={set('date')}
-                      className={inputCls(form.date, !!errors.date)}
-                      style={TRANSITION}
-                    />
-                  </Field>
-                </div>
-
-                {/* Message */}
-                <Field label="Message" error={errors.message}>
-                  <textarea
-                    rows={4}
-                    placeholder="Tell us about the event, location, audience and budget."
-                    value={form.message}
-                    onChange={set('message')}
-                    className={`${inputCls(form.message, !!errors.message)} resize-y`}
-                    style={{ ...TRANSITION, lineHeight: '1.55' }}
+              ) : (
+                <form onSubmit={handleSubmit} noValidate className="r-rise flex flex-col gap-[22px]">
+                  <input
+                    type="checkbox"
+                    name="botcheck"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    aria-hidden="true"
+                    className="hidden"
                   />
-                </Field>
-
-                {/* Submit */}
-                <button
-                  type="submit"
-                  disabled={sending}
-                  className="w-full lg:w-auto lg:self-start mt-[6px] inline-flex items-center justify-center gap-[11px] bg-gold-400 text-surface font-sans font-bold rounded-sharp cursor-pointer transition-all hover:bg-[#F8BE1C] hover:-translate-y-px hover:shadow-[0_8px_24px_rgba(240,174,30,.28)] disabled:opacity-60 disabled:cursor-wait disabled:hover:translate-y-0 disabled:hover:shadow-none"
-                  style={{ padding: '17px 34px', fontSize: '15px', letterSpacing: '.01em' }}
-                >
-                  {sending ? 'Sending…' : 'Send Booking Request'}
-                  <svg width="15" height="12" viewBox="0 0 15 12" fill="none" aria-hidden="true">
-                    <path d="M1 6H13M8.5 1.5L13 6L8.5 10.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </button>
-
-                {sendError && (
-                  <p role="alert" className="font-sans text-red-400" style={{ fontSize: '14px', lineHeight: '1.5' }}>
-                    Something went wrong sending your request. Please try again, or email us directly at{' '}
-                    <a href={`mailto:${CONTACT_EMAIL}`} className="underline text-sand-50">
-                      {CONTACT_EMAIL}
-                    </a>
-                    .
-                  </p>
-                )}
-              </form>
-            )}
+                  {/* Name + Email */}
+                  <div className="grid grid-cols-1 gap-[22px] lg:grid-cols-2">
+                    <Field label="Name" error={errors.name}>
+                      <input
+                        type="text"
+                        autoComplete="name"
+                        placeholder="Your name"
+                        value={form.name}
+                        onChange={set('name')}
+                        className={inputCls(form.name, !!errors.name)}
+                        style={TRANSITION}
+                      />
+                    </Field>
+                    <Field label="Email" error={errors.email}>
+                      <input
+                        type="email"
+                        autoComplete="email"
+                        placeholder="your@email.com"
+                        value={form.email}
+                        onChange={set('email')}
+                        className={inputCls(form.email, !!errors.email)}
+                        style={TRANSITION}
+                      />
+                    </Field>
+                  </div>
+  
+                  {/* Organization + Event Date */}
+                  <div className="grid grid-cols-1 gap-[22px] lg:grid-cols-2">
+                    <Field label="Organization / Venue" error={errors.org}>
+                      <input
+                        type="text"
+                        autoComplete="organization"
+                        placeholder="Venue or festival"
+                        value={form.org}
+                        onChange={set('org')}
+                        className={inputCls(form.org, !!errors.org)}
+                        style={TRANSITION}
+                      />
+                    </Field>
+                    <Field label="Event Date" error={errors.date}>
+                      <input
+                        type="text"
+                        placeholder="Approx. date or period"
+                        value={form.date}
+                        onChange={set('date')}
+                        className={inputCls(form.date, !!errors.date)}
+                        style={TRANSITION}
+                      />
+                    </Field>
+                  </div>
+  
+                  {/* Message */}
+                  <Field label="Message" error={errors.message}>
+                    <textarea
+                      rows={4}
+                      placeholder="Tell us about the event, location, audience and budget."
+                      value={form.message}
+                      onChange={set('message')}
+                      className={`${inputCls(form.message, !!errors.message)} resize-y`}
+                      style={{ ...TRANSITION, lineHeight: '1.55' }}
+                    />
+                  </Field>
+  
+                  {/* Submit */}
+                  <button
+                    type="submit"
+                    disabled={sending}
+                    className="w-full lg:w-auto lg:self-start mt-[6px] inline-flex items-center justify-center gap-[11px] bg-gold-400 text-surface font-sans font-bold rounded-sharp cursor-pointer transition-all hover:bg-[#F8BE1C] hover:-translate-y-px hover:shadow-[0_8px_24px_rgba(240,174,30,.28)] disabled:opacity-60 disabled:cursor-wait disabled:hover:translate-y-0 disabled:hover:shadow-none"
+                    style={{ padding: '17px 34px', fontSize: '15px', letterSpacing: '.01em' }}
+                  >
+                    {sending ? 'Sending…' : 'Send Booking Request'}
+                    <svg width="15" height="12" viewBox="0 0 15 12" fill="none" aria-hidden="true">
+                      <path d="M1 6H13M8.5 1.5L13 6L8.5 10.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+  
+                  {sendError && (
+                    <p role="alert" className="font-sans text-red-400" style={{ fontSize: '14px', lineHeight: '1.5' }}>
+                      Something went wrong sending your request. Please try again, or email us directly at{' '}
+                      <a href={`mailto:${CONTACT_EMAIL}`} className="underline text-sand-50">
+                        {CONTACT_EMAIL}
+                      </a>
+                      .
+                    </p>
+                  )}
+                </form>
+              )}
+            </div>
 
             {/* Contact fallback */}
             <div className="r-rise bg-surface-1 border border-gold-400/[.12] rounded-card" style={{ padding: '30px 28px', animationDelay: '0.12s' }}>
